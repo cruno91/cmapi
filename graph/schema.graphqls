@@ -1,28 +1,48 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
+scalar JSON
+scalar DateTime
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
-
-type User {
+type EntityType {
   id: ID!
   name: String!
+  description: String
 }
 
-type Query {
-  todos: [Todo!]!
+input CreateEntityTypeInput {
+  name: String!
+  description: String
 }
 
-input NewTodo {
-  text: String!
-  userId: String!
+type Bundle {
+  id: ID!
+  name: String!
+  label: String!
+  tableName: String!
+  fields: [FieldDefinition!]!
+}
+
+type FieldDefinition {
+  id: ID!
+  name: String!
+  type: String!
+  required: Boolean!
+  settings: JSON
+}
+
+input FieldInput {
+  name: String!
+  type: String!
+  required: Boolean!
+  settings: JSON
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createEntityType(input: CreateEntityTypeInput!): EntityType!
+  createBundle(entityTypeID: ID!, name: String!, label: String!, fields: [FieldInput!]!): Bundle!
+  addFieldToBundle(bundleID: ID!, input: FieldInput!): FieldDefinition!
+}
+
+type Query {
+  entityTypes: [EntityType!]!
+  bundles(entityTypeID: ID!): [Bundle!]!
+  fields(bundleID: ID!): [FieldDefinition!]!
 }
